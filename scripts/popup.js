@@ -33,7 +33,7 @@ $("#adddays").click(function() {
 });
 $("#deletdays").click(function() {
     days -= 1;
-   $("#hournum").text(days);
+   $("#daynum").text(days);
 });
 
 
@@ -74,7 +74,7 @@ function getCurrentTabUrl(callback) {
     // A tab is a plain object that provides information about the tab.
     // See https://developer.chrome.com/extensions/tabs#type-Tab
     var url = tab.url;
-
+    var title = tab.title;
 
     // tab.url is only available if the "activeTab" permission is declared.
     // If you want to see the URL of other tabs (e.g. after removing active:true
@@ -82,7 +82,7 @@ function getCurrentTabUrl(callback) {
     // "url" properties.
     console.assert(typeof url == 'string', 'tab.url should be a string');
 
-    callback(url);
+    callback(url,title);
   });
 
   // Most methods of the Chrome extension APIs are asynchronous. This means that
@@ -99,14 +99,14 @@ function getCurrentTabUrl(callback) {
 
 $("#tabbutton").click(function () {
 
-getCurrentTabUrl(function(url) {
+getCurrentTabUrl(function(url,title) {
     var time = mins + 60*hours + 60*24*days + 60*24*7*weeks;
     var newtab = {
      delayInMinutes: time, 
      periodInMinutes: null,
-     };
-
-    chrome.alarms.create(url + "+++" + msg, newtab);
+    };
+    tabset = title + "|||" + url + "|||" + msg;
+    chrome.alarms.create(tabset, newtab);
   $("#success").css("display","block");
   $("#url").val("");
   $("#minutes").val("");
