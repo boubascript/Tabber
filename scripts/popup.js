@@ -1,7 +1,7 @@
 
 var mins = 2;
 var hours = 0;
-var days  = 0;
+var days  = 1;
 var weeks = 0;
 var msg = "";
 
