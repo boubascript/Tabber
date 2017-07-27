@@ -1,12 +1,53 @@
-// Copyright (c) 2014 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
 
 var mins = 2;
 var hours = 0;
 var days  = 0;
 var weeks = 0;
 var msg = "";
+
+
+$("#addmins").click(function() {
+    mins += 1;
+   $("#minnum").text(mins);
+});
+
+$("#deletmins").click(function() {
+    mins -= 1;
+   $("#minnum").text(mins);
+});
+
+
+$("#addhours").click(function() {
+    hours += 1;
+   $("#hournum").text(hours);
+});
+$("#delethours").click(function() {
+    hours -= 1;
+   $("#hournum").text(hours);
+});
+
+
+$("#adddays").click(function() {
+    days += 1;
+   $("#daynum").text(days);
+});
+$("#deletdays").click(function() {
+    days -= 1;
+   $("#hournum").text(days);
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  getCurrentTabUrl(function(url) {
+    $("#url").val(url);
+    $("#message").text(msg);
+    $("#minnum").text(mins);
+    $("#hournum").text(hours);
+    $("#daynum").text(days);
+      
+  });
+});
+
 
 /**
  * Get the current URL.
@@ -56,20 +97,6 @@ function getCurrentTabUrl(callback) {
 
 
 
-
-document.addEventListener('DOMContentLoaded', function() {
-  getCurrentTabUrl(function(url) {
-    $("#url").val(url);
-    $("#message").text(msg);
-    $("#minnum").text(mins);
-    $("#hournum").text(hours);
-    $("#daynum").text(days);
-      
-  });
-});
-
-
-
 $("#tabbutton").click(function () {
 
 getCurrentTabUrl(function(url) {
@@ -88,35 +115,7 @@ getCurrentTabUrl(function(url) {
    });
 });
                       
-$("#addmins").click(function() {
-    mins += 1;
-   $("#minnum").text(mins);
-});
 
-$("#deletmins").click(function() {
-    mins -= 1;
-   $("#minnum").text(mins);
-});
-
-
-$("#addhours").click(function() {
-    hours += 1;
-   $("#hournum").text(hours);
-});
-$("#delethours").click(function() {
-    hours -= 1;
-   $("#hournum").text(hours);
-});
-
-
-$("#adddays").click(function() {
-    days += 1;
-   $("#daynum").text(days);
-});
-$("#deletdays").click(function() {
-    days -= 1;
-   $("#hournum").text(days);
-});
 
 
 

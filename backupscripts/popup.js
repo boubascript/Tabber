@@ -1,17 +1,42 @@
-// Copyright (c) 2014 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-var mins = 2;
+var mins = 0;
 var hours = 0;
 var days  = 0;
 var weeks = 0;
 
+$("#addmins").click(function() {
+    mins += 5;
+   $("#minnum").text(mins);
+});
+
+$("#deletmins").click(function() {
+    mins -= 5;
+   $("#minnum").text(mins);
+});
+
+
+$("#addhours").click(function() {
+    hours += 1;
+   $("#hournum").text(hours);
+});
+$("#delethours").click(function() {
+    hours -= 1;
+   $("#hournum").text(hours);
+});
+
+
+$("#adddays").click(function() {
+    days += 1;
+   $("#daynum").text(days);
+});
+$("#deletdays").click(function() {
+    days -= 1;
+   $("#hournum").text(days);
+});
+
 /**
  * Get the current URL.
  *
- * @param {function(string)} callback - called when the URL of the current tab
- *   is found.
+ * @param {function(string)} callback - called when the URL of the current tab is found.
  */
 function getCurrentTabUrl(callback) {
   // Query filter to be passed to chrome.tabs.query - see
@@ -77,7 +102,8 @@ getCurrentTabUrl(function(url) {
      periodInMinutes: null,
      };
 
-    chrome.alarms.create(url, newtab);
+  chrome.alarms.create(url, newtab);
+
   $("#success").css("display","block");
   $("#url").val("");
   $("#minutes").val("");
@@ -116,4 +142,15 @@ $("#deletdays").click(function() {
 });
 
 
+var url = "";
+var windowdata = {};
 
+chrome.alarms.onAlarm.addListener(function(alarm) {
+  console.log("Got an alarm!", alarm);
+
+  windowdata = {
+  	url: alarm.name
+  };
+
+  chrome.windows.create(windowdata);
+});
