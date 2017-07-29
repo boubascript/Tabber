@@ -1,7 +1,7 @@
 
-var mins = 2;
+var mins = 1;
 var hours = 0;
-var days  = 1;
+var days  = 0;
 var weeks = 0;
 var msg = "";
 
@@ -105,16 +105,73 @@ getCurrentTabUrl(function(url,title) {
      delayInMinutes: time, 
      periodInMinutes: null,
     };
+     if($("#message").val()== null || $("#message").val()== ""){
+       msg = " ";
+     }
     tabset = title + "|||" + url + "|||" + msg;
-    chrome.alarms.create(tabset, newtab);
+
   $("#success").css("display","block");
   $("#url").val("");
   $("#minutes").val("");
   $("#message").val("");
 
+  if (time<2){
+       windowdata = {
+      	  url: url
+      };
+      setTimeout(()=>chrome.windows.create(windowdata), 1000);
+      
+    }else{
+      chrome.alarms.create(tabset, newtab);
+    }
+
    });
+   
 });
-                      
+
+   /** 
+    * function getCurrentTabUrl(callback) {
+  // Query filter to be passed to chrome.tabs.query - see
+  // https://developer.chrome.com/extensions/tabs#method-query
+  var queryInfo = {
+    active: true,
+    currentWindow: true
+  };
+
+chrome.tabs.query(queryInfo, function(tabs) {
+    // chrome.tabs.query invokes the callback with a list of tabs that match the
+    // query. When the popup is opened, there is certainly a window and at least
+    // one tab, so we can safely assume that |tabs| is a non-empty array.
+    // A window can only have one active tab at a time, so the array consists of
+    // exactly one tab.
+    var tab = tabs[0];
+
+    chrome.tabs.remove(tab.id, function(){});
+
+  });
+};
+
+chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+    getTabs(tabs, function(full_mail_link){
+      chrome.tabs.create({ url: full_mail_link }, callBackOnCreate);
+    });
+});
+
+function callBackOnCreate(tab)
+{
+     globalCreatedTab = tab.id;
+}
+
+chrome.tabs.query({'active': true}, function(tabs) {
+      for (var i = 0; i < tabs.length; ++i)
+      {
+          if (tabs[i].id === globalCreatedTab)
+          {
+              chrome.tabs.remove(tabs[i].id);
+          }
+      }
+
+ });*/                   
 
 
 

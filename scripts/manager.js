@@ -14,8 +14,7 @@ function update(){
           num+=1;
           var title = alarm.name.split("|||")[0];
           var url = alarm.name.split("|||")[1];
-          //var msg = alarm.name.split("|||")[2];
-          var msg = ""
+          var msg = alarm.name.split("|||")[2];
           console.log(title + url);
           delet = " <a id = 'x"+ num + "' href = '#' class='waves-effect waves-red btn-flat red deleter'> <i class='material-icons large'>delete_forever</i> </a>";
           link = " <a target = '_blank' href ='" + url + "'> LINK </a>";
