@@ -7,9 +7,10 @@
 <html>
   <head>
     <title>Tabber</title>
-	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
-        <link rel="stylesheet" href="css/materialize.min.css">
-         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <!--<link rel="stylesheet" href="css/materialize.min.css">-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <style>
       body {
         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
@@ -23,7 +24,7 @@
         max-width: 400px;
       }
       html {
-            width: 600px;
+            width: 25em;
         }
       p {
             font-size: 200%;
@@ -40,16 +41,17 @@
   </head>
   <body class = "container">
    <center>
+        <h5>Tabber. Tabs, when you need them.</h5>
     <div class = "row">
         <div class = "col s5"> <p>Site</p> </div>
         <div class = "col s7"> <input id = "url"> </div>
     </div>
     <div class = "row">
-        <div class = "col s5"> <p>Note to Self</p> </div>
-        <div class = "col s7"> <input id = "message"> </div>
+        <div class = "col s5"> <p>Name</p> </div>
+        <div class = "col s7"> <input id = "name"> </div>
     </div>
 
-    <h1>Open This In: </h1>
+    <h4>Re-Open In: </h4>
       
     <div id = "times"> 
         <p> 
@@ -68,18 +70,36 @@
         </p>
     </div> 
 
-      
-      
+    <form>
+        <div class = "row">
+            <div class = "col s6">
+                <label for= "date">Open on this date</label>
+                <input placeholder = "Example date" id = "date" type="text" class="datepicker" />
+                <div id = "calendar"></div>
+            </div>
+
+            <div class = "col s6">
+                    <label for= "time">At this time</label>
+                    <input placeholder = "Example time" id = "time" type="text" class="timepicker">
+            </div>
+        </div>
+        <div class = "row">
+            
+        </div>
+    </form>
+
     <div id = "bottom">
-        <button type="button" class="btn btn-default" id = "tabbutton">Tab Me</button>
+        <button type="button" class="btn btn-default" id = "absolutetime">Absolute Time Test</button><br><br><br>
+        <button type="button" class="btn btn-default" id = "tabbutton">Single Tab Test</button>
+        <button type="button" class="btn btn-default" id = "sessionbutton">Re-Schedule This Session (Functional Window Reschedule)</button>
         <p id = "success" style = "display:none;"> Close this tab now</p>
         <p><a target="_blank" href = "manager.html">Manage Tabs</a></p>
     </div>
    </center>
 
     <script src="scripts/jquery.js" type="text/javascript"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>-->
     <script src="scripts/materialize.min.js"></script>
-    <!--<script data-main="scripts/addtab.js" src="scripts/require.js"></script>-->
     <script src="scripts/popup.js"></script>
     <script src = "scripts/addtab.js"></script>
     <div id="status"></div>

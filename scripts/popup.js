@@ -3,8 +3,7 @@ var mins = 1;
 var hours = 0;
 var days  = 0;
 var weeks = 0;
-var msg = "";
-
+var name = "";
 
 $("#addmins").click(function() {
     mins += 1;
@@ -37,18 +36,231 @@ $("#deletdays").click(function() {
 });
 
 
+
 document.addEventListener('DOMContentLoaded', function() {
-  getCurrentTabUrl(function(url) {
-    $("#url").val(url);
-    $("#message").text(msg);
+  var d = new Date(Date.now());
+  getCurrentTabUrl(function(url,title) {
+    //$("#url").val(url);
+    $("#name").val(title);
     $("#minnum").text(mins);
     $("#hournum").text(hours);
     $("#daynum").text(days);
-      
+
+    $('.datepicker').pickadate({
+      selectMonths: true, // Creates a dropdown to control month
+      selectYears: 15, // Creates a dropdown of 15 years to control year,
+      today: 'Today',
+      clear: 'Clear',
+      close: 'Ok',
+      closeOnSelect: true, // Close upon selecting a date,
+      min: Date.now(),
+      container:'#calendar',
+     // ex. 'body' will append picker to body
+    });
+
+    $('.timepicker').pickatime({
+      default: d.getMinutes() + 30, // Set default time: 'now', '1:30AM', '16:30'
+      fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+      twelvehour: false, // Use AM/PM or 24-hour format
+      donetext: 'OK', // text for done-button
+      cleartext: 'Clear', // text for clear-button
+      canceltext: 'Cancel', // Text for cancel-button,
+      container: undefined, // ex. 'body' will append picker to body
+      autoclose: false, // automatic close timepicker
+      ampmclickable: true, // make AM PM clickable
+      closeOnSelect: true,
+      closeOnClear: false,
+      aftershow: function(){} //Function for after opening timepicker
+    });
+
   });
 });
 
 
+
+$("#tabbutton").click(function () {
+
+getCurrentTabUrl(function(url,title) {
+  var isQuiet = false;
+  var recurring = false;
+  var queryInfo = {
+    active: true,
+    currentWindow: true
+  };
+
+  var urls = [];
+  var time = mins + 60*hours + 60*24*days + 60*24*7*weeks;
+  var name = $("#name").val();
+  //var time = $("#time").val();  beginning of set up for absolute time
+
+    var newtab = {
+     delayInMinutes: time, 
+     periodInMinutes: null,
+    };
+
+     if($("#name").val()== null || $("#name").val()== ""){
+       name = "x";
+     }
+
+    chrome.tabs.query(queryInfo, function (tabs){
+
+        for(i = 0; i < tabs.length; i++){
+          urls.push(tabs[i].url);
+        }
+
+        //--- Quick Hack for better presentation
+        // if (time<2){
+        //   windowdata = {
+        //       url: url
+        //   };
+        //   setTimeout(()=>chrome.windows.create(windowdata), 1000);
+          
+        // } else{
+        //   }
+
+          var info = {
+            session: {
+              tabs: tabs
+            },
+            isRecurring: recurring,
+            window: false
+          }
+
+          chrome.alarms.create(name, newtab);
+          chrome.storage.sync.set({[name]: info }, function() {
+            $("#success").css("display","block");
+          });
+
+          chrome.runtime.sendMessage({added: name}, function(response) {
+          });
+
+    });
+   
+  });
+
+});
+
+
+$("#sessionbutton").click(function () {
+  var isQuiet = false;
+  var recurring = false;
+  var queryInfo = {
+    currentWindow: true
+  };
+
+  var urls = [];
+
+  var time = mins + 60*hours + 60*24*days + 60*24*7*weeks;
+  var name = $("#name").val();
+
+  var date = $("#date").val();
+  //var time = $("#time").val();  beginning of set up for absolute time
+
+    var newtab = {
+     delayInMinutes: time, 
+     periodInMinutes: null,
+    };
+
+     if($("#name").val()== null || $("#name").val()== ""){
+       name = "x";
+     }
+
+    chrome.tabs.query(queryInfo, function (tabs){
+
+      for(i = 0; i < tabs.length; i++){
+        urls.push(tabs[i].url);
+      }
+
+    //--- Quick Hack for better presentation
+    //   if (time<2){
+    //     windowdata = {
+    //        url: urls
+    //    };
+    //    setTimeout(()=>chrome.windows.create(windowdata), 1000);
+       
+    //  }else{
+    //    }
+
+      var info = {
+        session: {
+          tabs: tabs
+        },
+        isRecurring: recurring,
+        window: true
+      }
+
+      chrome.alarms.create(name, newtab);
+      chrome.storage.sync.set({[name]: info }, function() {
+        $("#success").css("display","block");
+      });
+
+      chrome.runtime.sendMessage({added: name}, function(response) {
+      });
+
+    
+   });
+     
+});
+
+
+
+$("#absolutetime").click(function () {
+  var isQuiet = false;
+  var recurring = false;
+  var queryInfo = {
+    currentWindow: true
+  };
+
+  var urls = [];
+  var name = $("#name").val();
+  
+  var date = $("#date").val();
+  var time = $("#time").val();
+
+
+  date = Date.parse(date);
+  //date.setHours(date.getHours() + 50);
+
+
+  return 0;
+    var newtab = {
+     delayInMinutes: 0, 
+     periodInMinutes: null,
+    };
+
+     if($("#name").val()== null || $("#name").val()== ""){
+       name = "x";
+     }
+
+    chrome.tabs.query(queryInfo, function (tabs){
+
+      for(i = 0; i < tabs.length; i++){
+        urls.push(tabs[i].url);
+      }
+
+      var info = {
+        session: {
+          tabs: tabs
+        },
+        isRecurring: recurring,
+        window: false
+      }
+
+      chrome.alarms.create(name, newtab);
+      chrome.storage.sync.set({[name]: info }, function() {
+        $("#success").css("display","block");
+      });
+
+      chrome.runtime.sendMessage({added: name}, function(response) {
+        console.log(alarm.name);
+      });
+    
+   });
+     
+});
+
+
+//---------------------------------------------------------------------------
 /**
  * Get the current URL.
  *
@@ -93,85 +305,7 @@ function getCurrentTabUrl(callback) {
   //   url = tabs[0].url;
   // });
   // alert(url); // Shows "undefined", because chrome.tabs.query is async.
-}
-
-
-
-$("#tabbutton").click(function () {
-
-getCurrentTabUrl(function(url,title) {
-    var time = mins + 60*hours + 60*24*days + 60*24*7*weeks;
-    var newtab = {
-     delayInMinutes: time, 
-     periodInMinutes: null,
-    };
-     if($("#message").val()== null || $("#message").val()== ""){
-       msg = " ";
-     }
-    tabset = title + "|||" + url + "|||" + msg;
-
-  $("#success").css("display","block");
-  $("#url").val("");
-  $("#minutes").val("");
-  $("#message").val("");
-
-  if (time<2){
-       windowdata = {
-      	  url: url
-      };
-      setTimeout(()=>chrome.windows.create(windowdata), 1000);
-      
-    }else{
-      chrome.alarms.create(tabset, newtab);
-    }
-
-   });
-   
-});
-
-   /** 
-    * function getCurrentTabUrl(callback) {
-  // Query filter to be passed to chrome.tabs.query - see
-  // https://developer.chrome.com/extensions/tabs#method-query
-  var queryInfo = {
-    active: true,
-    currentWindow: true
-  };
-
-chrome.tabs.query(queryInfo, function(tabs) {
-    // chrome.tabs.query invokes the callback with a list of tabs that match the
-    // query. When the popup is opened, there is certainly a window and at least
-    // one tab, so we can safely assume that |tabs| is a non-empty array.
-    // A window can only have one active tab at a time, so the array consists of
-    // exactly one tab.
-    var tab = tabs[0];
-
-    chrome.tabs.remove(tab.id, function(){});
-
-  });
-};
-
-chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-    getTabs(tabs, function(full_mail_link){
-      chrome.tabs.create({ url: full_mail_link }, callBackOnCreate);
-    });
-});
-
-function callBackOnCreate(tab)
-{
-     globalCreatedTab = tab.id;
-}
-
-chrome.tabs.query({'active': true}, function(tabs) {
-      for (var i = 0; i < tabs.length; ++i)
-      {
-          if (tabs[i].id === globalCreatedTab)
-          {
-              chrome.tabs.remove(tabs[i].id);
-          }
-      }
-
- });*/                   
+}                 
 
 
 
