@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
 $("#tabbutton").click(function () {
 
 getCurrentTabUrl(function(url,title) {
-  var isQuiet = false;
+  var silent = $("#silent").is(":checked");
   var recurring = false;
   var queryInfo = {
     active: true,
@@ -109,13 +109,14 @@ getCurrentTabUrl(function(url,title) {
         }
 
         //--- Quick Hack for better presentation
-        // if (time<2){
-        //   windowdata = {
-        //       url: url
-        //   };
-        //   setTimeout(()=>chrome.windows.create(windowdata), 1000);
+        if (time<2){
+          windowdata = {
+              url: url,
+              focused: !silent
+          };
+          setTimeout(()=>chrome.windows.create(windowdata), 1000);
           
-        // } else{
+        } else{
         //   }
 
           var info = {
@@ -123,6 +124,7 @@ getCurrentTabUrl(function(url,title) {
               tabs: tabs
             },
             isRecurring: recurring,
+            isQuiet: silent,
             window: false
           }
 
@@ -133,6 +135,7 @@ getCurrentTabUrl(function(url,title) {
 
           chrome.runtime.sendMessage({added: name}, function(response) {
           });
+        }
 
     });
    
@@ -142,7 +145,7 @@ getCurrentTabUrl(function(url,title) {
 
 
 $("#sessionbutton").click(function () {
-  var isQuiet = false;
+  var silent = false;
   var recurring = false;
   var queryInfo = {
     currentWindow: true
@@ -186,6 +189,7 @@ $("#sessionbutton").click(function () {
           tabs: tabs
         },
         isRecurring: recurring,
+        isQuiet: silent,
         window: true
       }
 
@@ -205,7 +209,7 @@ $("#sessionbutton").click(function () {
 
 
 $("#absolutetime").click(function () {
-  var isQuiet = false;
+  var silent = false;
   var recurring = false;
   var queryInfo = {
     currentWindow: true
@@ -243,6 +247,7 @@ $("#absolutetime").click(function () {
           tabs: tabs
         },
         isRecurring: recurring,
+        isQuiet: silent,
         window: false
       }
 

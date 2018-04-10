@@ -1,9 +1,14 @@
+input[type="checkbox"] {
+  position: static !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
 .btnInline {
-    float:left;
-    display:inline;
+  display: inline;
 }
 
 #bottom {
-    margin: auto;
-    width: 300px;
+  margin: auto;
+  width: 300px;
 }
