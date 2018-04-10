@@ -78,83 +78,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 $("#tabbutton").click(function () {
-
-  getCurrentTabUrl(function (url, title) {
-    var silent = $("#silent").is(":checked");
-    var recurring = false;
     var queryInfo = {
       active: true,
       currentWindow: true
     };
-
-    var urls = [];
-    var time = mins + 60 * hours + 60 * 24 * days + 60 * 24 * 7 * weeks;
-    var name = $("#name").val();
-    //var time = $("#time").val();  beginning of set up for absolute time
-
-    var newtab = {
-      delayInMinutes: time,
-      periodInMinutes: null,
-    };
-
-    if ($("#name").val() == null || $("#name").val() == "") {
-      name = "x";
-    }
-
-    chrome.tabs.query(queryInfo, function (tabs) {
-
-      for (i = 0; i < tabs.length; i++) {
-        urls.push(tabs[i].url);
-      }
-
-      //--- Quick Hack for better presentation
-      if (time < 2) {
-        windowdata = {
-          url: url,
-          focused: !silent
-        };
-        setTimeout(() => chrome.windows.create(windowdata), 1000);
-
-      } else {
-        //   }
-
-        var info = {
-          session: {
-            tabs: tabs
-          },
-          isRecurring: recurring,
-          isQuiet: silent,
-          window: false
-        }
-
-        chrome.alarms.create(name, newtab);
-        chrome.storage.sync.set({
-          [name]: info
-        }, function () {
-          $("#success").css("display", "block");
-        });
-
-        chrome.runtime.sendMessage({
-          added: name
-        }, function (response) {});
-      }
-
-    });
-
-  });
-
+    
+    saveTabs(queryInfo,false,false);
 });
 
 
 $("#sessionbutton").click(function () {
-  var silent = false;
-  var recurring = false;
   var queryInfo = {
     currentWindow: true
   };
 
-  var urls = [];
+  saveTabs(queryInfo,true,false);
+});
 
+
+
+function saveTabs(queryInfo,isWindow,test){
+  var silent = $("#silent").is(":checked");
+  var recurring = false;
+
+  var urls = [];
+  var ids = [];
   var time = mins + 60 * hours + 60 * 24 * days + 60 * 24 * 7 * weeks;
   var name = $("#name").val();
 
@@ -174,17 +122,18 @@ $("#sessionbutton").click(function () {
 
     for (i = 0; i < tabs.length; i++) {
       urls.push(tabs[i].url);
+      ids.push(tabs[i].id);
     }
 
     //--- Quick Hack for better presentation
-    //   if (time<2){
-    //     windowdata = {
-    //        url: urls
-    //    };
-    //    setTimeout(()=>chrome.windows.create(windowdata), 1000);
+      if (test){
+        windowdata = {
+           url: urls
+       };
+       setTimeout(()=>chrome.windows.create(windowdata), 1000);
 
-    //  }else{
-    //    }
+     }else{
+       }
 
     var info = {
       session: {
@@ -192,7 +141,7 @@ $("#sessionbutton").click(function () {
       },
       isRecurring: recurring,
       isQuiet: silent,
-      window: true
+      window: isWindow
     }
 
     chrome.alarms.create(name, newtab);
@@ -206,11 +155,13 @@ $("#sessionbutton").click(function () {
       added: name
     }, function (response) {});
 
+    chrome.tabs.remove(ids,function(){});
 
   });
 
-});
 
+
+}
 
 
 $("#absolutetime").click(function () {
@@ -272,8 +223,6 @@ $("#absolutetime").click(function () {
   });
 
 });
-
-
 //---------------------------------------------------------------------------
 /**
  * Get the current URL.

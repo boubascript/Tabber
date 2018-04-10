@@ -34,7 +34,6 @@
 * Create react native app, like Tabber but for apps instead of tabs
 
 ## Long-Term 
-* Store alarm data to server, to allow for cross browser Tabber
 * Use top sites/history to learn tab browsing habits and begin suggesting for users
 * G Suite Integration
     * Google Calendar (Work around your schedule to open tabs at correct times)
@@ -42,3 +41,4 @@
 * Block tabs from sessions not related to current project/work (break vs work mode) @ralph
     * Streamline focus by disallowing distractions
 * Tabber Enterprise Edition?
+* Store alarm data to server, to allow for cross browser Tabber

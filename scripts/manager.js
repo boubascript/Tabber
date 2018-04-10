@@ -1,4 +1,7 @@
-var windowdata = {};
+
+$(document).ready(function () {
+    reload();
+  });
 
 function reload() {
   update();
@@ -6,14 +9,6 @@ function reload() {
   setInterval(showTimers, 1000);
 }
 
-$(document).ready(function () {
-  reload();
-});
-
-
-
-var num = 0;
-var tasks = {};
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
@@ -22,50 +17,111 @@ chrome.runtime.onMessage.addListener(
 
 
 // "<p id = 'time'>" + days + " days, " + hours + " hours, " + minutes + " minutes" + seconds + " seconds" + " </p>"
+
+/* ICONS: 
+open session: open_in_new
+view tabs:     menu
+view:        unfold_more 
+upcoming:     priority_high
+more_vert
+
+*/
+
+
 function update() {
   $("#alarmList").html("");
   $("#alarmList").append("<div id = 'alarms' class = 'row' ></div");
-  var pos = 1;
-  chrome.alarms.getAll(function (alarms) {
-    alarms.forEach(function (alarm) {
-      num += 1;
 
-      // chrome.storage.sync.get([alarm.name], function(result){
-      //     console.log(result);
-      // });
-      var title = alarm.name.split("|||")[0];
-      var url = alarm.name.split("|||")[1];
-      var msg = alarm.name.split("|||")[2];
+  var times = [];
+  var sortedAlarms = {};
+  var length = 0
+  var count = 0;
+    chrome.alarms.getAll(function (alarms) {
+        alarms.forEach(function (alarm) {
+            times.push(alarm.scheduledTime);
+            sortedAlarms[alarm.scheduledTime] = alarm.name;
+        });
 
+        times.sort(function(a, b){return a - b});
 
+        for(i = 0; i < times.length; i++ ){
+            console.log(times[i]);
+            chrome.alarms.get(sortedAlarms[times[i]], function (alarm) {
+                    var name = alarm.name
+                    var ID = name.replace(/[^\w]/gi, '-');
+            
+                //   chrome.storage.sync.get([alarm.name], function(result){
+                //       console.log(result);
+                //   });
+            
+                console.log(alarm.name);
+            
+                  delet = " <a id = 'x" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
+                  link = " <a target = '_blank' href ='" + ID + "'> LINK </a>";
+                  open =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
+                  view =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>menu</i></a>"
+            
+            
+                  card = "<div id = 'card-" + ID + "'class = 'col s3'>" +
+                    "<div class='card blue-grey darken-1'>" +
+            
+                    "<div class='card-content white-text'> " +
+                        "<span title = '"  + name + "' class='card-title ellipsis activator grey-text text-darken-4'>" + name + "</span>" +
+                        //"<p><a href='#'>This is a link</a></p>" +
+                        "</span>" + "<p class = 'time' id = 't-" + ID + "'> </p>" +
+                    "</div>"  +
+            
+                    "<div class='card-action'>" +
+                        link + delet + view + 
+                    
+                    "</div> </div> </div>";
+            
+                  $("#alarms").append(card);
+            
+                });
+        }
 
-      delet = " <a id = 'x" + num + "' href = '#' class='waves-effect waves-red btn-flat red deleter'> <i class='material-icons medium'>delete_forever</i> </a>";
-      link = " <a target = '_blank' href ='" + url + "'> LINK </a>";
-
-      var name = alarm.name.replace(/\s+/g, '-').replace(/\\/g, '').replace(/\?/g, '');
-
-
-      //$("#alarmList").append(delet + "  " + num + " -- "+ link + "      (time : " + alarm.scheduledTime + ")</p>");
-      card = "<div id = '" + name + "'class = 'col s4'>" +
-        "<div class='card blue-grey darken-1'>" +
-
-        "<div class='card-content white-text'> " +
-        "<span class='card-title'>" + "<div class = 'row'><div class = 'col s9'>" + title +
-        "</div><div class = 'col s3'>" + delet + "</div></div>" +
-        "</span>" + "<p id = 't-" + name + "'> </p>" +
-        "</div>" +
-        "<a target = '_blank' href = '" + url + "'class='btn-floating halfway-fab waves-effect waves-light teal'><i class='material-icons'>near_me</i></a>" +
-        "<div class='card-action'>" +
-        link + "</div> </div> </div>";
-
-      $("#alarms").append(card);
-      //   if(num % 3 == 0){
-      //       pos += 3
-      //       $("#alarmList").append("<div id = '" + pos + "' class = 'row'></div");
-      //   }
     });
 
-  });
+  
+//   chrome.alarms.getAll(function (alarms) {
+//     alarms.forEach(function (alarm) {
+//         var name = alarm.name
+//         var ID = name.replace(/[^\w]/gi, '-');
+
+//     //   chrome.storage.sync.get([alarm.name], function(result){
+//     //       console.log(result);
+//     //   });
+
+//     console.log(alarm.name);
+
+//       delet = " <a id = 'x" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
+//       link = " <a target = '_blank' href ='" + ID + "'> LINK </a>";
+//       open =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
+//       view =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>menu</i></a>"
+
+
+//       card = "<div id = 'card-" + ID + "'class = 'col s4'>" +
+//         "<div class='card blue-grey darken-1'>" +
+
+//         "<div class='card-content white-text'> " +
+//             "<span title = '"  + name + "' class='card-title ellipsis activator grey-text text-darken-4'>" + name + "</span>" +
+//             "<p><a href='#'>This is a link</a></p>" +
+//             "</span>" + "<p id = 't-" + ID + "'> </p>" +
+//         "</div>"  +
+
+//         "<div class='card-action'>" +
+//             link + delet + view + 
+        
+//         "</div> </div> </div>";
+
+//       $("#alarms").append(card);
+
+//     });
+
+//   });
+  
+
 }
 
 
@@ -74,6 +130,7 @@ function showTimers() {
     alarms.forEach(function (alarm) {
       var timeleft = alarm.scheduledTime - Date.now();
       timeleft = new Date(alarm.scheduledTime).getTime() - Date.now();
+
 
       var sec = 1000;
       var min = 60 * sec;
@@ -87,11 +144,31 @@ function showTimers() {
       var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
 
-      var name = alarm.name.replace(/\s+/g, '-').replace(/\\/g, '').replace(/\?/g, '');
+      var name = alarm.name;
+      var ID = name.replace(/[^\w]/gi, '-');
 
       // console.log(days + " days, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds");
       // console.log("#t-" + name);
-      $("#t-" + name).text(days + " days, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds");
+      var timelabel = seconds + " seconds";
+      if(minutes != 0){
+          timelabel = minutes + " minutes, " + timelabel;
+      }
+      if(hours != 0){
+        timelabel = hours + " hours, " + timelabel;
+      }
+      if(days != 0){
+        timelabel = days + " days, " + timelabel;
+      }
+
+      
+      $("#t-" + ID).text(timelabel);
+      if(days == 0 && hours == 0 && minutes < 5){
+        $("#t-" + ID).css('color', 'red');
+        timelabel += "!"
+      }
+
+      $("#t-" + ID).text(timelabel);
+
     });
 
   });
