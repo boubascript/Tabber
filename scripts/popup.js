@@ -97,11 +97,11 @@ $("#tabbutton").click(function () {
       periodInMinutes: null,
     };
 
-    if ($("#name").val() == null || $("#name").val() == "") {
-      name = "x";
-    }
-
     chrome.tabs.query(queryInfo, function (tabs) {
+      
+      if (name == null || name == "") {
+        name = tab[0];
+      }
 
       for (i = 0; i < tabs.length; i++) {
         urls.push(tabs[i].url);
@@ -117,8 +117,9 @@ $("#tabbutton").click(function () {
 
       } else {
         //   }
-
+        var id = Date.now().toString(36) + Math.random().toString(36).slice(2);
         var info = {
+          name: name,
           session: {
             tabs: tabs
           },
@@ -127,9 +128,9 @@ $("#tabbutton").click(function () {
           window: false
         }
 
-        chrome.alarms.create(name, newtab);
+        chrome.alarms.create(id, newtab);
         chrome.storage.sync.set({
-          [name]: info
+          [id]: info
         }, function () {
           $("#success").css("display", "block");
         });

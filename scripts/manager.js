@@ -30,6 +30,7 @@ function update() {
     alarms.forEach(function (alarm) {
       num += 1;
 
+      // TODO: Use each alarm to get from storage and show proper info stored in storage.
       // chrome.storage.sync.get([alarm.name], function(result){
       //     console.log(result);
       // });
