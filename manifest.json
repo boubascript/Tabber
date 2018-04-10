@@ -8,12 +8,12 @@
   "browser_action": {
     "default_icon": "tabberlogo.png",
     "default_popup": "popup.html",
-     "default_title": "Need this later?"
+    "default_title": "Need this later?"
   },
 
   "background": {
-        "scripts": ["scripts/addtab.js", "scripts/manager.js"]
-    },
+    "scripts": ["scripts/addtab.js", "scripts/manager.js"]
+  },
 
   "permissions": [
     "activeTab",
