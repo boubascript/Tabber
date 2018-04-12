@@ -10,11 +10,6 @@ p {
   font-size: 150%;
 }
 
-input[type="checkbox"] {
-  position: static !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
 
 #status {
   /* avoid an excessively wide status text */
@@ -31,4 +26,12 @@ input[type="checkbox"] {
 
 .btnInline {
   display: inline;
+}
+
+#namelabel{
+  font-size:0.9em;
+}
+
+#managerlink{
+  font-size:2em;
 }

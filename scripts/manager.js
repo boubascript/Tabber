@@ -1,7 +1,11 @@
 
 $(document).ready(function () {
+  chrome.storage.sync.get(["quiet"], function (result) {
+    $("#silent").prop("checked", result.quiet);
+  });
     reload();
   });
+
 
 function reload() {
   update();
@@ -45,7 +49,7 @@ function update() {
         times.sort(function(a, b){return a - b});
 
         for(i = 0; i < times.length; i++ ){
-            console.log(times[i]);
+            //console.log(times[i]);
             chrome.alarms.get(sortedAlarms[times[i]], function (alarm) {
                     var name = alarm.name
                     var ID = name.replace(/[^\w]/gi, '-');
@@ -54,15 +58,13 @@ function update() {
                 //       console.log(result);
                 //   });
             
-                console.log(alarm.name);
-            
-                  delet = " <a id = 'x" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
-                  link = " <a target = '_blank' href ='" + ID + "'> LINK </a>";
+                  delet = "<a id = 'x-" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
+                  link =  "<a target = '_blank' href ='" + ID + "'>  </a>";
                   open =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
                   view =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>menu</i></a>"
             
             
-                  card = "<div id = 'card-" + ID + "'class = 'col s3'>" +
+                  card = "<div id = 'card-" + ID + "'class = 'col s4'>" +
                     "<div class='card blue-grey darken-1'>" +
             
                     "<div class='card-content white-text'> " +
@@ -77,50 +79,23 @@ function update() {
                     "</div> </div> </div>";
             
                   $("#alarms").append(card);
+
+                  $("#x-" + ID).on("click", function(){
+                      chrome.alarms.clear(name, function(wasCleared){
+                          if(wasCleared){
+                            chrome.storage.sync.remove([name], function () {
+                              console.log("remoooved");
+                              console.log(alarm.name);
+                            });
+                              reload();
+                          }
+                      });
+                    });
             
-                });
+            });
         }
 
     });
-
-  
-//   chrome.alarms.getAll(function (alarms) {
-//     alarms.forEach(function (alarm) {
-//         var name = alarm.name
-//         var ID = name.replace(/[^\w]/gi, '-');
-
-//     //   chrome.storage.sync.get([alarm.name], function(result){
-//     //       console.log(result);
-//     //   });
-
-//     console.log(alarm.name);
-
-//       delet = " <a id = 'x" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
-//       link = " <a target = '_blank' href ='" + ID + "'> LINK </a>";
-//       open =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
-//       view =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>menu</i></a>"
-
-
-//       card = "<div id = 'card-" + ID + "'class = 'col s4'>" +
-//         "<div class='card blue-grey darken-1'>" +
-
-//         "<div class='card-content white-text'> " +
-//             "<span title = '"  + name + "' class='card-title ellipsis activator grey-text text-darken-4'>" + name + "</span>" +
-//             "<p><a href='#'>This is a link</a></p>" +
-//             "</span>" + "<p id = 't-" + ID + "'> </p>" +
-//         "</div>"  +
-
-//         "<div class='card-action'>" +
-//             link + delet + view + 
-        
-//         "</div> </div> </div>";
-
-//       $("#alarms").append(card);
-
-//     });
-
-//   });
-  
 
 }
 
@@ -174,56 +149,93 @@ function showTimers() {
   });
 }
 
+$("#silent").change(function(){
+
+  chrome.storage.sync.set({
+    "quiet": $("#silent").is(":checked")
+   }, function () {
+  });
+
+});
+
 
 $("#deletall").click(function () {
+
+  chrome.alarms.getAll(function (alarms) {
+    alarms.forEach(function (alarm) {
+      chrome.storage.sync.remove([alarm.name], function () {
+        console.log("remoooved");
+        console.log(alarm.name);
+      });
+
+    });
+
+  });
+
   chrome.alarms.clearAll();
   reload();
 });
 
 
-//-- Not yet functional
-// for(x = 1;x<=num;x++){
-//     $("#x"+ num).click(function() {
-//         $("#card"+ num).detach();
-//         console.log("detached");
-//     });
-// }
-
-
 
 //---------------------- Tests For Event Page, Don't Use Here (Ignore)
-// chrome.alarms.onAlarm.addListener(function( alarm ) {
+// chrome.alarms.onAlarm.addListener(function (alarm) {
+//   var urls = [];
 
-//     var urls = [];
+//   chrome.storage.sync.get([alarm.name], function (result) {
+//     var info = result[alarm.name];
 
-//     chrome.storage.sync.get([alarm.name], function(result) {
-//       var info = result[alarm.name];
+//     for (i = 0; i < info.session.tabs.length; i++) {
+//       urls.push(info.session["tabs"][i].url);
+//     }
 
-//       for(i = 0; i < info.session.tabs.length; i++){
-//         urls.push(info.session["tabs"][i].url);
-//         }
+//       chrome.storage.sync.get(["quiet"], function (result) {
+//         console.log(result.quiet);
+//           if(result.quiet){
+//             chrome.windows.getLastFocused(function(window){
+//               console.log(window);
+//               console.log(window.id);
+//               for (i = 0; i < urls.length; i++) {
+//                 var info = {
+//                   windowId:window.id,
+//                   url: urls[i],
+//                   active: false
+//                 }
+//                 chrome.tabs.create(info, function(tab){});
+//               }
 
-//         console.log(urls);
-//         windowdata = {
-//             url: urls
-//           };
+//             });
+//           }
 
-//           chrome.windows.create(windowdata);
-
-//        if(!(info.isRecurring)){
-//         chrome.storage.sync.remove([alarm.name], function() {
-//             console.log("remoooved");
-//             console.log(alarm.name);
+//           else{
+//             console.log("not quiet");
+//             windowdata = {
+//               url: urls,
+//               focused: false
+//             };
+        
+//             chrome.windows.create(windowdata);
+//           }
 //         });
-//        }
 
-//     });
-
-//     chrome.runtime.sendMessage({alarm: alarm.name}, function(response) {
+//     if (!(info.isRecurring)) {
+//       chrome.storage.sync.remove([alarm.name], function () {
+//         console.log("remoooved");
 //         console.log(alarm.name);
 //       });
+//     }
 
 //   });
+
+//   chrome.runtime.sendMessage({
+//     added: alarm.name
+//   }, function (response) {
+//     console.log(alarm.name);
+//   });
+
+// });
+
+
 
 chrome.runtime.getPlatformInfo(function (info) {
   // Display host OS in the console

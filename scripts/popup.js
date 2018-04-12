@@ -163,6 +163,16 @@ function saveTabs(queryInfo,isWindow,test){
 
 }
 
+$("#silent").change(function(){
+
+  chrome.storage.sync.set({
+    "quiet": $("#silent").checked
+   }, function () {
+     alert($("#silent").checked);
+  });
+
+});
+
 
 $("#absolutetime").click(function () {
   var silent = false;
