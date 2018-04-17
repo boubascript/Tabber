@@ -115,7 +115,7 @@ function saveTabs(queryInfo,isWindow,test){
   };
 
   if ($("#name").val() == null || $("#name").val() == "") {
-    name = "x";
+    name = tab[0].title;
   }
 
   chrome.tabs.query(queryInfo, function (tabs) {
@@ -134,8 +134,12 @@ function saveTabs(queryInfo,isWindow,test){
 
      }else{
        }
-
+       
+    var id = Date.now().toString(36) + Math.random().toString(36).slice(2);
     var info = {
+      name: name,
+      url: url,
+      msg: '',
       session: {
         tabs: tabs
       },
@@ -144,9 +148,9 @@ function saveTabs(queryInfo,isWindow,test){
       window: isWindow
     }
 
-    chrome.alarms.create(name, newtab);
+    chrome.alarms.create(id, newtab);
     chrome.storage.sync.set({
-      [name]: info
+      [id]: info
     }, function () {
       $("#success").css("display", "block");
     });
@@ -199,7 +203,7 @@ $("#absolutetime").click(function () {
   };
 
   if ($("#name").val() == null || $("#name").val() == "") {
-    name = "x";
+    name = tab[0].title;
   }
 
   chrome.tabs.query(queryInfo, function (tabs) {
@@ -208,7 +212,11 @@ $("#absolutetime").click(function () {
       urls.push(tabs[i].url);
     }
 
+    var id = Date.now().toString(36) + Math.random().toString(36).slice(2);
     var info = {
+      name: name,
+      url: url,
+      msg: '',
       session: {
         tabs: tabs
       },
@@ -217,9 +225,9 @@ $("#absolutetime").click(function () {
       window: false
     }
 
-    chrome.alarms.create(name, newtab);
+    chrome.alarms.create(id, newtab);
     chrome.storage.sync.set({
-      [name]: info
+      [id]: info
     }, function () {
       $("#success").css("display", "block");
     });

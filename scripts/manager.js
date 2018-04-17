@@ -1,10 +1,9 @@
-
 $(document).ready(function () {
   chrome.storage.sync.get(["quiet"], function (result) {
     $("#silent").prop("checked", result.quiet);
   });
-    reload();
-  });
+  reload();
+});
 
 
 function reload() {
@@ -40,62 +39,65 @@ function update() {
   var sortedAlarms = {};
   var length = 0
   var count = 0;
-    chrome.alarms.getAll(function (alarms) {
-        alarms.forEach(function (alarm) {
-            times.push(alarm.scheduledTime);
-            sortedAlarms[alarm.scheduledTime] = alarm.name;
+  chrome.alarms.getAll(function (alarms) {
+    alarms.forEach(function (alarm) {
+      times.push(alarm.scheduledTime);
+      sortedAlarms[alarm.scheduledTime] = alarm.name;
+    });
+
+    times.sort(function (a, b) {
+      return a - b
+    });
+
+    for (i = 0; i < times.length; i++) {
+      //console.log(times[i]);
+      chrome.alarms.get(sortedAlarms[times[i]], function (alarm) {
+        var ID = alarm.name;
+        
+        chrome.storage.sync.get([ID], function (result) {
+          result = result[ID];
+          var name = result.name;
+          
+          delet = "<a id = 'x-" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
+          link = "<a target = '_blank' href ='" + ID + "'>  </a>";
+          open = "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
+          view = "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>menu</i></a>"
+
+
+          card = "<div id = 'card-" + ID + "'class = 'col s4'>" +
+            "<div class='card blue-grey darken-1'>" +
+
+            "<div class='card-content white-text'> " +
+            "<span title = '" + name + "' class='card-title ellipsis activator grey-text text-darken-4'>" + name + "</span>" +
+            //"<p><a href='#'>This is a link</a></p>" +
+            "</span>" + "<p class = 'time' id = 't-" + ID + "'> </p>" +
+            "</div>" +
+
+            "<div class='card-action'>" +
+            link + delet + view +
+
+            "</div> </div> </div>";
+
+          $("#alarms").append(card);
+
+          $("#x-" + ID).on("click", function () {
+            chrome.alarms.clear(name, function (wasCleared) {
+              if (wasCleared) {
+                chrome.storage.sync.remove([name], function () {
+                  console.log("remoooved");
+                  console.log(alarm.name);
+                });
+                reload();
+              }
+            });
+          });
+
         });
 
-        times.sort(function(a, b){return a - b});
+      });
+    }
 
-        for(i = 0; i < times.length; i++ ){
-            //console.log(times[i]);
-            chrome.alarms.get(sortedAlarms[times[i]], function (alarm) {
-                    var name = alarm.name
-                    var ID = name.replace(/[^\w]/gi, '-');
-            
-                //   chrome.storage.sync.get([alarm.name], function(result){
-                //       console.log(result);
-                //   });
-            
-                  delet = "<a id = 'x-" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
-                  link =  "<a target = '_blank' href ='" + ID + "'>  </a>";
-                  open =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
-                  view =  "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>menu</i></a>"
-            
-            
-                  card = "<div id = 'card-" + ID + "'class = 'col s4'>" +
-                    "<div class='card blue-grey darken-1'>" +
-            
-                    "<div class='card-content white-text'> " +
-                        "<span title = '"  + name + "' class='card-title ellipsis activator grey-text text-darken-4'>" + name + "</span>" +
-                        //"<p><a href='#'>This is a link</a></p>" +
-                        "</span>" + "<p class = 'time' id = 't-" + ID + "'> </p>" +
-                    "</div>"  +
-            
-                    "<div class='card-action'>" +
-                        link + delet + view + 
-                    
-                    "</div> </div> </div>";
-            
-                  $("#alarms").append(card);
-
-                  $("#x-" + ID).on("click", function(){
-                      chrome.alarms.clear(name, function(wasCleared){
-                          if(wasCleared){
-                            chrome.storage.sync.remove([name], function () {
-                              console.log("remoooved");
-                              console.log(alarm.name);
-                            });
-                              reload();
-                          }
-                      });
-                    });
-            
-            });
-        }
-
-    });
+  });
 
 }
 
@@ -105,7 +107,6 @@ function showTimers() {
     alarms.forEach(function (alarm) {
       var timeleft = alarm.scheduledTime - Date.now();
       timeleft = new Date(alarm.scheduledTime).getTime() - Date.now();
-
 
       var sec = 1000;
       var min = 60 * sec;
@@ -125,19 +126,19 @@ function showTimers() {
       // console.log(days + " days, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds");
       // console.log("#t-" + name);
       var timelabel = seconds + " seconds";
-      if(minutes != 0){
-          timelabel = minutes + " minutes, " + timelabel;
+      if (minutes != 0) {
+        timelabel = minutes + " minutes, " + timelabel;
       }
-      if(hours != 0){
+      if (hours != 0) {
         timelabel = hours + " hours, " + timelabel;
       }
-      if(days != 0){
+      if (days != 0) {
         timelabel = days + " days, " + timelabel;
       }
 
-      
+
       $("#t-" + ID).text(timelabel);
-      if(days == 0 && hours == 0 && minutes < 5){
+      if (days == 0 && hours == 0 && minutes < 5) {
         $("#t-" + ID).css('color', 'red');
         timelabel += "!"
       }
@@ -149,12 +150,11 @@ function showTimers() {
   });
 }
 
-$("#silent").change(function(){
+$("#silent").change(function () {
 
   chrome.storage.sync.set({
     "quiet": $("#silent").is(":checked")
-   }, function () {
-  });
+  }, function () {});
 
 });
 
@@ -213,7 +213,7 @@ $("#deletall").click(function () {
 //               url: urls,
 //               focused: false
 //             };
-        
+
 //             chrome.windows.create(windowdata);
 //           }
 //         });
