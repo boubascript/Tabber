@@ -53,11 +53,11 @@ function update() {
       //console.log(times[i]);
       chrome.alarms.get(sortedAlarms[times[i]], function (alarm) {
         var ID = alarm.name;
-        
+
         chrome.storage.sync.get([ID], function (result) {
           result = result[ID];
           var name = result.name;
-          
+
           delet = "<a id = 'x-" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
           link = "<a target = '_blank' href ='" + ID + "'>  </a>";
           open = "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
@@ -81,11 +81,11 @@ function update() {
           $("#alarms").append(card);
 
           $("#x-" + ID).on("click", function () {
-            chrome.alarms.clear(name, function (wasCleared) {
+            chrome.alarms.clear(ID, function (wasCleared) {
               if (wasCleared) {
-                chrome.storage.sync.remove([name], function () {
+                chrome.storage.sync.remove([ID], function () {
                   console.log("remoooved");
-                  console.log(alarm.name);
+                  console.log(alarm.ID);
                 });
                 reload();
               }
