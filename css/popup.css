@@ -19,6 +19,10 @@ p {
   max-width: 400px;
 }
 
+#times input {
+  text-align: center;
+}
+
 #bottom {
   margin: auto;
   width: 300px;

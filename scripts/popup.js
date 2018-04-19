@@ -51,25 +51,33 @@ document.addEventListener('DOMContentLoaded', function () {
       today: 'Today',
       clear: 'Clear',
       close: 'Ok',
-      closeOnSelect: true, // Close upon selecting a date,
+      closeOnSelect: false, // Close upon selecting a date,
       min: Date.now(),
       container: '#calendar',
       // ex. 'body' will append picker to body
+      onStart: function () {
+        var d = new Date();
+        this.set('select', [d.getFullYear(), d.getMonth(), d.getDate()]);
+      }
     });
 
     $('.timepicker').pickatime({
-      default: d.getMinutes() + 30, // Set default time: 'now', '1:30AM', '16:30'
-      fromnow: 0, // set default time to * milliseconds from now (using with default = 'now')
-      twelvehour: false, // Use AM/PM or 24-hour format
+      default: 'now', // d.getMinutes() + 30, // Set default time: 'now', '1:30AM', '16:30'
+      twelveHour: true, // Use AM/PM or 24-hour format
       donetext: 'OK', // text for done-button
       cleartext: 'Clear', // text for clear-button
       canceltext: 'Cancel', // Text for cancel-button,
-      container: undefined, // ex. 'body' will append picker to body
       autoclose: false, // automatic close timepicker
       ampmclickable: true, // make AM PM clickable
       closeOnSelect: true,
       closeOnClear: false,
-      aftershow: function () {} //Function for after opening timepicker
+      container: "#timepicker",
+      init: function () {
+        $("#time").val(new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        }).replace(" ", ""));
+      }
     });
 
   });
@@ -78,12 +86,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 $("#tabbutton").click(function () {
-    var queryInfo = {
-      active: true,
-      currentWindow: true
-    };
-    
-    saveTabs(queryInfo,false,false);
+  var queryInfo = {
+    active: true,
+    currentWindow: true
+  };
+  saveTabs(queryInfo, false, false, true);
 });
 
 
@@ -91,28 +98,46 @@ $("#sessionbutton").click(function () {
   var queryInfo = {
     currentWindow: true
   };
-
-  saveTabs(queryInfo,true,false);
+  saveTabs(queryInfo, true, false);
 });
 
 
 
-function saveTabs(queryInfo,isWindow,test){
+function saveTabs(queryInfo, isWindow, test, absolute) {
   var silent = $("#silent").is(":checked");
   var recurring = false;
 
   var urls = [];
   var ids = [];
-  var time = mins + 60 * hours + 60 * 24 * days + 60 * 24 * 7 * weeks;
-  var name = $("#name").val();
-
   var date = $("#date").val();
-  //var time = $("#time").val();  beginning of set up for absolute time
+  var time = null;
+  var split = null;
 
-  var newtab = {
-    delayInMinutes: time,
-    periodInMinutes: null,
-  };
+  var newtab = null;
+
+  if (absolute) {
+    split = new Date().toString().split(" ");
+    time = $("#time").val();
+    time = time.split(":");
+    time[2] = time[1].slice(-2);
+    time[1] = time[1].slice(0, -2);
+    if (time[2] === "PM") {
+      time[0] = String(Number(time[0]) + 12);
+    }
+    time.splice(-1);
+    time = time.join(":");
+    time += (":00 " + split[split.length - 1].replace(/[()]/gi, ""));
+    date = date.split(" ");
+    date[1] = date[1].slice(0, 3);
+    date = date.join(" ");
+    time = Date.parse(date + " " + time);
+  } else {
+    time = mins + 60 * hours + 60 * 24 * days + 60 * 24 * 7 * weeks;
+  }
+
+  console.log("time: " + time + ".", "absolute: " + absolute + ".");
+
+  var name = $("#name").val();
 
   if ($("#name").val() == null || $("#name").val() == "") {
     name = tab[0].title;
@@ -126,15 +151,14 @@ function saveTabs(queryInfo,isWindow,test){
     }
 
     //--- Quick Hack for better presentation
-      if (test){
-        windowdata = {
-           url: urls
-       };
-       setTimeout(()=>chrome.windows.create(windowdata), 1000);
+    if (test) {
+      windowdata = {
+        url: urls
+      };
+      setTimeout(() => chrome.windows.create(windowdata), 1000);
 
-     }else{
-       }
-       
+    }
+
     var id = Date.now().toString(36) + Math.random().toString(36).slice(2);
     var info = {
       name: name,
@@ -148,6 +172,17 @@ function saveTabs(queryInfo,isWindow,test){
       window: isWindow
     }
 
+    if (absolute) {
+      newtab = {
+        when: time
+      };
+    } else {
+      newtab = {
+        delayInMinutes: time,
+        periodInMinutes: null,
+      };
+    }
+
     chrome.alarms.create(id, newtab);
     chrome.storage.sync.set({
       [id]: info
@@ -159,7 +194,7 @@ function saveTabs(queryInfo,isWindow,test){
       added: name
     }, function (response) {});
 
-    chrome.tabs.remove(ids,function(){});
+    chrome.tabs.remove(ids, function () {});
 
   });
 
@@ -167,79 +202,23 @@ function saveTabs(queryInfo,isWindow,test){
 
 }
 
-$("#silent").change(function(){
+$("#silent").change(function () {
 
   chrome.storage.sync.set({
     "quiet": $("#silent").checked
-   }, function () {
-     alert($("#silent").checked);
+  }, function () {
+    alert($("#silent").checked);
   });
 
 });
 
 
 $("#absolutetime").click(function () {
-  var silent = false;
-  var recurring = false;
   var queryInfo = {
+    active: true,
     currentWindow: true
   };
-
-  var urls = [];
-  var name = $("#name").val();
-
-  var date = $("#date").val();
-  var time = $("#time").val();
-
-
-  date = Date.parse(date);
-  //date.setHours(date.getHours() + 50);
-
-
-  return 0;
-  var newtab = {
-    delayInMinutes: 0,
-    periodInMinutes: null,
-  };
-
-  if ($("#name").val() == null || $("#name").val() == "") {
-    name = tab[0].title;
-  }
-
-  chrome.tabs.query(queryInfo, function (tabs) {
-
-    for (i = 0; i < tabs.length; i++) {
-      urls.push(tabs[i].url);
-    }
-
-    var id = Date.now().toString(36) + Math.random().toString(36).slice(2);
-    var info = {
-      name: name,
-      url: url,
-      msg: '',
-      session: {
-        tabs: tabs
-      },
-      isRecurring: recurring,
-      isQuiet: silent,
-      window: false
-    }
-
-    chrome.alarms.create(id, newtab);
-    chrome.storage.sync.set({
-      [id]: info
-    }, function () {
-      $("#success").css("display", "block");
-    });
-
-    chrome.runtime.sendMessage({
-      added: name
-    }, function (response) {
-      console.log(alarm.name);
-    });
-
-  });
-
+  saveTabs(queryInfo, false, false, true);
 });
 //---------------------------------------------------------------------------
 /**
