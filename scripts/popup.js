@@ -220,22 +220,27 @@ $("#silent").change(function () {
 $("#absolutetime").click(function () {
 
   var split = new Date().toString().split(" ");
+  var date = $("#date").val();
   var time = $("#time").val();
+
+  console.log("split", split);
+  console.log("date", date);
+  console.log("time", time);
+
+  date = date.split(" ");
+  date[1] = date[1].slice(0, 3);
+  date = date.join(" ");
+
   time = time.split(":");
   time[2] = time[1].slice(-2);
   time[1] = time[1].slice(0, -2);
-
   if (time[2] === "PM") {
     time[0] = String(Number(time[0]) + 12);
   }
-
   time.splice(-1);
   time = time.join(":");
   time += (":00 " + split[split.length - 1].replace(/[()]/gi, ""));
-  var date = $("#date").val();
-  date.split(" ");
-  date[1] = date[1].slice(0, 3);
-  date = date.join(" ");
+
   time = Date.parse(date + " " + time);
 
   saveTabs({
