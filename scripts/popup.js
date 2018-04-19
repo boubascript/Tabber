@@ -8,7 +8,6 @@ $("#addmins").click(function () {
   mins += 1;
   $("#minnum").text(mins);
 });
-
 $("#deletmins").click(function () {
   mins -= 1;
   $("#minnum").text(mins);
@@ -34,6 +33,38 @@ $("#deletdays").click(function () {
   $("#daynum").text(days);
 });
 
+$("#latertodaybtn").click(function () {
+  
+  saveTabs({
+    active: true,
+    currentWindow: true
+  }, false, false, true, Date.now() + (60 * 1000 * 60 * 6)); // six hours
+
+});
+$("#tomorrowbtn").click(function () {
+  
+  saveTabs({
+    active: true,
+    currentWindow: true
+  }, false, false, true, Date.now() + (60 * 1000 * 60 * 24)); // twenty four hours
+
+});
+$("#nextweekbtn").click(function () {
+  
+  saveTabs({
+    active: true,
+    currentWindow: true
+  }, false, false, true, Date.now() + (60 * 1000 * 60 * 24 * 7)); // seven days
+
+});
+$("#nextmonthbtn").click(function () {
+  
+  saveTabs({
+    active: true,
+    currentWindow: true
+  }, false, false, true, Date.now() + (60 * 1000 * 60 * 24 * 7 * 5)); // five weeks
+
+});
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -83,8 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-
-
 $("#tabbutton").click(function () {
   var queryInfo = {
     active: true,
@@ -93,7 +122,6 @@ $("#tabbutton").click(function () {
   saveTabs(queryInfo, false, false, true);
 });
 
-
 $("#sessionbutton").click(function () {
   var queryInfo = {
     currentWindow: true
@@ -101,41 +129,20 @@ $("#sessionbutton").click(function () {
   saveTabs(queryInfo, true, false);
 });
 
-
-
-function saveTabs(queryInfo, isWindow, test, absolute) {
+function saveTabs(queryInfo, isWindow, test, absolute, time) {
   var silent = $("#silent").is(":checked");
   var recurring = false;
 
   var urls = [];
   var ids = [];
   var date = $("#date").val();
-  var time = null;
   var split = null;
 
   var newtab = null;
 
-  if (absolute) {
-    split = new Date().toString().split(" ");
-    time = $("#time").val();
-    time = time.split(":");
-    time[2] = time[1].slice(-2);
-    time[1] = time[1].slice(0, -2);
-    if (time[2] === "PM") {
-      time[0] = String(Number(time[0]) + 12);
-    }
-    time.splice(-1);
-    time = time.join(":");
-    time += (":00 " + split[split.length - 1].replace(/[()]/gi, ""));
-    date = date.split(" ");
-    date[1] = date[1].slice(0, 3);
-    date = date.join(" ");
-    time = Date.parse(date + " " + time);
-  } else {
+  if (!absolute) {
     time = mins + 60 * hours + 60 * 24 * days + 60 * 24 * 7 * weeks;
   }
-
-  console.log("time: " + time + ".", "absolute: " + absolute + ".");
 
   var name = $("#name").val();
 
@@ -198,8 +205,6 @@ function saveTabs(queryInfo, isWindow, test, absolute) {
 
   });
 
-
-
 }
 
 $("#silent").change(function () {
@@ -212,14 +217,34 @@ $("#silent").change(function () {
 
 });
 
-
 $("#absolutetime").click(function () {
-  var queryInfo = {
+
+  var split = new Date().toString().split(" ");
+  var time = $("#time").val();
+  time = time.split(":");
+  time[2] = time[1].slice(-2);
+  time[1] = time[1].slice(0, -2);
+
+  if (time[2] === "PM") {
+    time[0] = String(Number(time[0]) + 12);
+  }
+
+  time.splice(-1);
+  time = time.join(":");
+  time += (":00 " + split[split.length - 1].replace(/[()]/gi, ""));
+  var date = $("#date").val();
+  date.split(" ");
+  date[1] = date[1].slice(0, 3);
+  date = date.join(" ");
+  time = Date.parse(date + " " + time);
+
+  saveTabs({
     active: true,
     currentWindow: true
-  };
-  saveTabs(queryInfo, false, false, true);
+  }, false, false, true, time);
+
 });
+
 //---------------------------------------------------------------------------
 /**
  * Get the current URL.
