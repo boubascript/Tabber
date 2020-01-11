@@ -1,0 +1,154 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+
+<head>
+  <title>Tabber</title>
+  <link rel="stylesheet" href="css/popup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <!--<link rel="stylesheet" href="css/materialize.min.css">-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+     -->
+
+
+</head>
+
+<body class="container">
+  <center>
+    <h5>Tabber. Tabs, when you need them.</h5>
+
+    <!-- Showing URL 
+    <div class="row">
+      <div class="col s5">
+        <p>Site</p>
+      </div>
+      <div class="col s7">
+        <input id="url"> </div>
+    </div>
+    -->
+
+    <div class="row">
+        <p id="namelabel">Generalize Your Session with a short phrase</p>
+      <div class="col s2 offset-s1">
+        <p>Name</p>
+      </div>
+      <div class="col s8">
+        <input id="name">
+      </div>
+    </div>
+
+
+    <!-- <div id="times">
+      <p>
+        <button id="deletmins" type="button" class="btn btn-default"> - </button>
+        <span id="minnum"></span> Minutes
+        <button id="addmins" type="button" class="btn btn-default"> + </button>
+      </p>
+      <p>
+        <button id="delethours" type="button" class="btn btn-default"> - </button>
+        <span id="hournum"></span> Hours
+        <button id="addhours" type="button" class="btn btn-default"> + </button>
+      </p>
+      <p>
+        <button id="deletdays" type="button" class="btn btn-default"> - </button>
+        <span id="daynum"></span> Days
+        <button id="adddays" type="button" class="btn btn-default"> + </button>
+      </p>
+    </div> -->
+
+    <form>
+      <div class = "row">
+        <div class = "col s6">
+            <h4>Re-Open</h4>
+        </div>
+        <div class="input-field col s6">
+            <select id = "scope">
+              <option value="window" selected>This Window</option>
+              <option value="tab">Just This Tab</option>
+            </select>
+            <label>Select which tabs to save</label>
+        </div>
+      </div>
+    </form>
+
+    <br><br>
+    <form id="times">
+      <div class="row">
+
+        <div class="col s6">
+          <label for="date">On this date</label>
+          <input placeholder="Example date" id="date" type="text" class="datepicker" />
+          <div id="calendar"></div>
+        </div>
+
+        <div class="col s6">
+          <label for="time">At this time</label>
+          <input placeholder="Example time" id="time" type="text" class="timepicker">
+          <div id="timepicker"></div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+        <div class = "col s12">
+            <button type="button" class="btn btn-default" id="rightnow">In A Minute</button>
+        </div>
+        <br><br><br><br>
+    <div class = "col s12">
+      <button type="button" class="btn btn-default" id="absolutetime">At This Time</button>
+     </div>
+    <br><br><br><br>
+      <button type="button" class="btn btn-default" id="latertodaybtn">Later Today</button>
+      <button type="button" class="btn btn-default" id="tomorrowbtn">Tomorrow</button>
+      <br><br><br>
+      <button type="button" class="btn btn-default" id="nextweekbtn">Next Week</button>
+      <button type="button" class="btn btn-default" id="nextmonthbtn">Next Month</button>
+    </div>
+
+    <div id="bottom">
+      <!-- <div class="row">
+          <div class = "col s4 ">
+            <p id = "silentlabel"> Quiet Pop Up</p>
+          </div>
+          <div class="col s4">
+            <label for="silent">Silent Popup</label>
+            <input id="silent" type="checkbox" value="silent" name="silent" />
+          </div>
+      </div> -->
+      <br>
+      <p id="success" style="display:none;"> Close this tab now</p>
+     
+      <div class="switch">
+        <label>
+          Force Active Window
+          <input id="silent" type="checkbox">
+          <span class="lever"></span>
+
+        </label>
+      </div>
+
+      <p id="managerlink">
+        <a target="_blank" href="manager.html">Manage Tabs</a>
+      </p>
+    </div>
+  </center>
+
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script> -->
+  <script src="scripts/materialize.min.js"></script>
+  <script src="scripts/popup.js"></script>
+  <script src="scripts/addtab.js"></script>
+  <div id="status"></div>
+</body>
+
+</html>

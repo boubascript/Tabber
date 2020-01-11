@@ -1,0 +1,19 @@
+
+.ellipsis {
+  text-overflow: ellipsis;
+  /* Required for text-overflow to do anything */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.time {
+  font-size: 1.5em;
+}
+
+#deletall{
+  vertical-align: middle;
+}
+
+.collection-item > p{
+  width:10%;
+}

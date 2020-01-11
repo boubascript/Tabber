@@ -1,25 +1,27 @@
 {
   "manifest_version": 2,
 
-  "name": "Tabber",
+  "name": "Tabber Dev",
   "description": "This extension opens tabs in your browser when you need them",
   "version": "1.0",
 
   "browser_action": {
     "default_icon": "tabberlogo.png",
     "default_popup": "popup.html",
-     "default_title": "Need this later?"
+    "default_title": "Need this later?"
   },
 
   "background": {
-        "scripts": ["scripts/addtab.js"],
-        "persistent": false
-    },
+    "scripts": ["scripts/addtab.js", "scripts/manager.js"]
+  },
 
   "permissions": [
     "activeTab",
     "https://ajax.googleapis.com/",
     "alarms",
-    "tabs"
+    "tabs",
+    "sessions",
+    "contextMenus",
+    "storage"
   ]
 }
