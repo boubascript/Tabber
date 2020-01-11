@@ -33,41 +33,10 @@ $("#deletdays").click(function () {
   $("#daynum").text(days);
 });
 
-$("#latertodaybtn").click(function () {
-  
-  saveTabs({
-    active: true,
-    currentWindow: true
-  }, false, false, true, Date.now() + (60 * 1000 * 60 * 6)); // six hours
-
-});
-$("#tomorrowbtn").click(function () {
-  
-  saveTabs({
-    active: true,
-    currentWindow: true
-  }, false, false, true, Date.now() + (60 * 1000 * 60 * 24)); // twenty four hours
-
-});
-$("#nextweekbtn").click(function () {
-  
-  saveTabs({
-    active: true,
-    currentWindow: true
-  }, false, false, true, Date.now() + (60 * 1000 * 60 * 24 * 7)); // seven days
-
-});
-$("#nextmonthbtn").click(function () {
-  
-  saveTabs({
-    active: true,
-    currentWindow: true
-  }, false, false, true, Date.now() + (60 * 1000 * 60 * 24 * 7 * 5)); // five weeks
-
-});
-
 
 document.addEventListener('DOMContentLoaded', function () {
+  $('select').material_select();
+
   var d = new Date(Date.now());
   getCurrentTabUrl(function (url, title) {
     //$("#url").val(url);
@@ -114,22 +83,39 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-$("#tabbutton").click(function () {
-  var queryInfo = {
-    active: true,
-    currentWindow: true
-  };
-  saveTabs(queryInfo, false, false, true);
+const getQuery = () => {
+  return ($("#scope").val() == "window" ? {currentWindow: true} : {active: true, currentWindow: true});
+}
+
+$("#rightnow").click(function () {
+  saveTabs(getQuery(), Date.now() + (60 * 1000), true, true); // six hours
+
 });
 
-$("#sessionbutton").click(function () {
-  var queryInfo = {
-    currentWindow: true
-  };
-  saveTabs(queryInfo, true, false);
+$("#latertodaybtn").click(function () {
+  saveTabs(getQuery(), Date.now() + (60 * 1000 * 60 * 6), true, true); // six hours
+
 });
 
-function saveTabs(queryInfo, isWindow, test, absolute, time) {
+$("#tomorrowbtn").click(function () {
+  saveTabs(getQuery(), Date.now() + (60 * 1000 * 60 * 24), true, true); // twenty four hours
+
+});
+
+$("#nextweekbtn").click(function () {
+  
+  saveTabs(getQuery(), Date.now() + (60 * 1000 * 60 * 24 * 7), true, true); // seven days
+
+});
+
+$("#nextmonthbtn").click(function () {
+  
+  saveTabs(getQuery(), Date.now() + (60 * 1000 * 60 * 24 * 7 * 4), true, true); // four weeks
+
+});
+
+
+function saveTabs(queryInfo, time, test, absolute) {
   var silent = $("#silent").is(":checked");
   var recurring = false;
 
@@ -140,9 +126,9 @@ function saveTabs(queryInfo, isWindow, test, absolute, time) {
 
   var newtab = null;
 
-  if (!absolute) {
-    time = mins + 60 * hours + 60 * 24 * days + 60 * 24 * 7 * weeks;
-  }
+  // if (!absolute) {
+  //   time = mins + 60 * hours + 60 * 24 * days + 60 * 24 * 7 * weeks;
+  // }
 
   var name = $("#name").val();
 
@@ -158,13 +144,13 @@ function saveTabs(queryInfo, isWindow, test, absolute, time) {
     }
 
     //--- Quick Hack for better presentation
-    if (test) {
-      windowdata = {
-        url: urls
-      };
-      setTimeout(() => chrome.windows.create(windowdata), 1000);
+    // if (test) {
+    //   windowdata = {
+    //     url: urls
+    //   };
+    //   setTimeout(() => chrome.windows.create(windowdata), 1000);
 
-    }
+    // }
 
     var id = Date.now().toString(36) + Math.random().toString(36).slice(2);
     var info = {
@@ -176,7 +162,7 @@ function saveTabs(queryInfo, isWindow, test, absolute, time) {
       },
       isRecurring: recurring,
       isQuiet: silent,
-      window: isWindow
+      //window: isWindow
     }
 
     if (absolute) {
@@ -212,7 +198,7 @@ $("#silent").change(function () {
   chrome.storage.sync.set({
     "quiet": $("#silent").checked
   }, function () {
-    alert($("#silent").checked);
+    //alert($("#silent").checked);
   });
 
 });
@@ -243,12 +229,10 @@ $("#absolutetime").click(function () {
 
   time = Date.parse(date + " " + time);
 
-  saveTabs({
-    active: true,
-    currentWindow: true
-  }, false, false, true, time);
+  saveTabs(getQuery(), time, true, true);
 
 });
+
 
 //---------------------------------------------------------------------------
 /**

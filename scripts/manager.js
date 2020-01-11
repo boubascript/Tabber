@@ -6,12 +6,17 @@ $(document).ready(function () {
 });
 
 
-function reload() {
+// function reload() {
+//   update();
+//   showTimers();
+//   setInterval(showTimers, 1000);
+// }
+
+const reload = function(){
   update();
   showTimers();
   setInterval(showTimers, 1000);
 }
-
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
@@ -56,27 +61,47 @@ function update() {
 
         chrome.storage.sync.get([ID], function (result) {
           result = result[ID];
-          var name = result.name;
+          name = result.name;
 
-          delet = "<a id = 'x-" + ID + "' href = '#' class='left waves-effect waves-red '><i class='material-icons'>delete</i></a>";
-          link = "<a target = '_blank' href ='" + ID + "'>  </a>";
-          open = "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>"
-          view = "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>menu</i></a>"
+          
 
+          delet = "<a id = 'x-" + ID + "' href = '#' class=' inliner left waves-effect waves-red'><i class='material-icons'>delete</i></a>";
+          //link = "<a target = '_blank' href ='" + ID + "'>  </a>";
+          open = "<a target = '_blank' href = '" + ID + "'class='right btn-floating waves-effect waves-light teal'><i class='material-icons'>open_in_new</i></a>";
+          view = "<span class='activator inliner right waves-effect waves-light'><i class='material-icons'>more_vert</i></span>";
 
-          card = "<div id = 'card-" + ID + "'class = 'col s4'>" +
-            "<div class='card blue-grey darken-1'>" +
+          collection = "<ul class='collection with-header'>" + 
+                  "<li class='collection-header'><p>Open all links for {{name}}<a id = 'open-{{ID}}' href='#!' class='secondary-content'><i class='material-icons'>open_in_new</i></a></p></li>" + 
+                  "{{links}}" + 
+                   "</ul>";
 
-            "<div class='card-content white-text'> " +
-            "<span title = '" + name + "' class='card-title ellipsis activator grey-text text-darken-4'>" + name + "</span>" +
-            //"<p><a href='#'>This is a link</a></p>" +
-            "</span>" + "<p class = 'time' id = 't-" + ID + "'> </p>" +
-            "</div>" +
+          links = "";
+          for(i = 0; i < result.session.tabs.length;i++){
+            nextlink = "<li class='collection-item'><p><a target = '_blank' href = '{{url}}' class = 'ellipsis link'>{{title}}</a></p></li>";
+            nextlink = nextlink.replace("{{url}}", result.session.tabs[i].url).replace("{{title}}",result.session.tabs[i].title);
+            links += nextlink;
+          }
+          collection = collection.replace("{{links}}",links).replace("{{name}}",name).replace("{{ID}}",ID);
 
-            "<div class='card-action'>" +
-            link + delet + view +
+          card = "<div id = 'card-" + ID + "'class = 'col s3'>" +
+                    "<div class='card small blue-grey darken-1'>" +
 
-            "</div> </div> </div>";
+                        "<div class='card-content white-text'> " +
+                              "<span title = '" + name + "' class='card-title ellipsis activator grey-text text-darken-4'>" + name + "</span>" +
+                              "<p class = 'time' id = 't-"+ ID + "'> </p>" +
+                        "</div>" +
+
+                        "<div class='card-action'>" +
+                          delet + view + "<p></p>" + 
+                        "</div>" +
+
+                        "<div class='card-reveal'>" + 
+                             delet + 
+                            "<span class='card-title'><i class='material-icons right'>close</i>Links for this session</span>" +
+                            collection +
+                        "</div>" +
+                    "</div>" + 
+                 "</div>";
 
           $("#alarms").append(card);
 
@@ -85,7 +110,7 @@ function update() {
               if (wasCleared) {
                 chrome.storage.sync.remove([ID], function () {
                   console.log("remoooved");
-                  console.log(alarm.ID);
+                  console.log(ID);
                 });
                 reload();
               }
@@ -151,7 +176,6 @@ function showTimers() {
 }
 
 $("#silent").change(function () {
-
   chrome.storage.sync.set({
     "quiet": $("#silent").is(":checked")
   }, function () {});
@@ -177,6 +201,25 @@ $("#deletall").click(function () {
 });
 
 
+const getAllAlarms = function(){
+  return new Promise((resolve,reject) => {
+    //Async code
+    //when done must call resolve!!
+    chrome.alarms.getAll( (alarms) => {
+      resolve(alarms);
+    });
+  });
+}
+
+const getAlarmInfo = function(alarm){
+  return new Promise((resolve,reject) => {
+    chrome.storage.sync.get(alarm.name, (info) => {
+      resolve(info);
+    });
+  });
+}
+
+getAllAlarms().then((alarms) => getAlarmInfo(alarms[0])).then(( (info) => { console.log(info);}));
 
 //---------------------- Tests For Event Page, Don't Use Here (Ignore)
 // chrome.alarms.onAlarm.addListener(function (alarm) {
@@ -235,6 +278,23 @@ $("#deletall").click(function () {
 
 // });
 
+
+// const promisepractice = function(){
+//   return new Promise((resolve,reject) => {
+//     //Async code
+//     //when done must call resolve!!
+//     resolve(data,stuff);
+//   });
+// }
+
+// const chromey = function(data,stuff){
+//   return new Promise((resolve,reject) => {
+
+//     resolve();
+//   });
+// }
+
+// promisepractice().then((arg1,arg2) => chromey(arg1,arg2)).then();
 
 
 chrome.runtime.getPlatformInfo(function (info) {

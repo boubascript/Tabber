@@ -1,7 +1,6 @@
 
 .ellipsis {
   text-overflow: ellipsis;
-
   /* Required for text-overflow to do anything */
   white-space: nowrap;
   overflow: hidden;
@@ -13,4 +12,8 @@
 
 #deletall{
   vertical-align: middle;
+}
+
+.collection-item > p{
+  width:10%;
 }

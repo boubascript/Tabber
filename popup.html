@@ -38,16 +38,15 @@
     -->
 
     <div class="row">
+        <p id="namelabel">Generalize Your Session with a short phrase</p>
       <div class="col s2 offset-s1">
         <p>Name</p>
       </div>
       <div class="col s8">
         <input id="name">
       </div>
-      <p id="namelabel">Generalize Your Session with a short phrase</p>
     </div>
 
-    <h4>Re-Open In: </h4>
 
     <!-- <div id="times">
       <p>
@@ -67,10 +66,27 @@
       </p>
     </div> -->
 
+    <form>
+      <div class = "row">
+        <div class = "col s6">
+            <h4>Re-Open</h4>
+        </div>
+        <div class="input-field col s6">
+            <select id = "scope">
+              <option value="window" selected>This Window</option>
+              <option value="tab">Just This Tab</option>
+            </select>
+            <label>Select which tabs to save</label>
+        </div>
+      </div>
+    </form>
+
+    <br><br>
     <form id="times">
       <div class="row">
+
         <div class="col s6">
-          <label for="date">Open on this date</label>
+          <label for="date">On this date</label>
           <input placeholder="Example date" id="date" type="text" class="datepicker" />
           <div id="calendar"></div>
         </div>
@@ -81,25 +97,25 @@
           <div id="timepicker"></div>
         </div>
       </div>
-      <div class="row">
-        <label for="reoccurring" </div>
     </form>
 
     <div class="row">
+        <div class = "col s12">
+            <button type="button" class="btn btn-default" id="rightnow">In A Minute</button>
+        </div>
+        <br><br><br><br>
+    <div class = "col s12">
+      <button type="button" class="btn btn-default" id="absolutetime">At This Time</button>
+     </div>
+    <br><br><br><br>
       <button type="button" class="btn btn-default" id="latertodaybtn">Later Today</button>
       <button type="button" class="btn btn-default" id="tomorrowbtn">Tomorrow</button>
+      <br><br><br>
       <button type="button" class="btn btn-default" id="nextweekbtn">Next Week</button>
       <button type="button" class="btn btn-default" id="nextmonthbtn">Next Month</button>
     </div>
 
     <div id="bottom">
-      <br>
-      <br>
-      <button type="button" class="btn btn-default" id="absolutetime">Absolute Time Test</button>
-      <br>
-      <br>
-      <br>
-
       <!-- <div class="row">
           <div class = "col s4 ">
             <p id = "silentlabel"> Quiet Pop Up</p>
@@ -109,19 +125,9 @@
             <input id="silent" type="checkbox" value="silent" name="silent" />
           </div>
       </div> -->
-
-
-      <button type="button" class="btn btn-default" id="tabbutton">THIS TAB</button>
       <br>
-      <br>
-      <br>
-      <button type="button" class="btn btn-default" id="sessionbutton">THIS WINDOW SESSION</button>
       <p id="success" style="display:none;"> Close this tab now</p>
-
-      <br>
-      <br>
-      <br>
-
+     
       <div class="switch">
         <label>
           Force Active Window

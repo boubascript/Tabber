@@ -11,8 +11,8 @@
 **Bold items are higher priority and would help the most for presentation**
 
 ##  Settings
-* **Quiet Pop-Up Setting**
 * Themes
+* Quicksave settingss
 
 ## Popup Page
 * **Replace time mechanism with more fitting general blocks(later today, tomorrow, next week, next month, etc)**
@@ -20,12 +20,12 @@
     * Have settings to match
 * **Clean up UX and UI!**
 * *Finish absolute time option for scheduling*
+* Quicksave option
 
 ## Tab Manager Page
 * **Clean up UX and UI!!!**
-* **Delete option for individual sessions**
 * **Allow user to open tabs from this page before they are scheduled to open for quick access**
-* Organize in order of increasing time left to open
+* Undo button for delete so they can go back on it (@abdul)
 
 ## Short-Term Features / Goals
 * Recurring tab alarm feature 
@@ -41,4 +41,4 @@
 * Block tabs from sessions not related to current project/work (break vs work mode) @ralph
     * Streamline focus by disallowing distractions
 * Tabber Enterprise Edition?
-* Store alarm data to server, to allow for cross browser Tabber
+* Store alarm data to server, cross browser Tabber
