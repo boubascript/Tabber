@@ -1,17 +1,21 @@
 import React from 'react';
-import './App.css';
+import {Link} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+
+import './App.css';
 
 export default function App() {
   return (
     <div className="App">
       <header className="App-header">
         <p>
-          Tabber React soon come !!!
+          Tabber React Popup soon come !!!
         </p>
-        <Button variant="contained" color="primary">
-          Save Tab
-        </Button>
+        <Link to="/tabber" target="_blank">
+          <Button variant="contained" color="primary">
+            Save Tab
+          </Button>
+        </Link>
       </header>
     </div>
   );
